@@ -7,8 +7,9 @@ import DashboardIcon from "@material-ui/icons/Dashboard";
 import SettingsIcon from "@material-ui/icons/Settings";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
-
+import PetsIcon from "@material-ui/icons/Pets";
 import { Trans } from "react-i18next";
+
 const MainListItems = () => {
   return (
     <div>
@@ -18,6 +19,12 @@ const MainListItems = () => {
           <DashboardIcon />
         </ListItemIcon>
         <ListItemText primary={<Trans i18nKey="title">Dashboard</Trans>} />
+      </ListItem>
+      <ListItem button onClick={() => (window.location.href = "/pets")}>
+        <ListItemIcon>
+          <PetsIcon />
+        </ListItemIcon>
+        <ListItemText primary={<Trans i18nKey="users">Pets</Trans>} />
       </ListItem>
       <ListItem button onClick={() => (window.location.href = "/users")}>
         <ListItemIcon>

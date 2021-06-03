@@ -22,6 +22,8 @@ import MainListItems from "../components/listItems";
 import SettingsPage from "../pages/settings.page";
 import UsersPage from "./users.page";
 import Dashboard from "./indexpage.page";
+import PetsPage from "./pets.page";
+import SinglePetPage from "./single-pet.page";
 
 const drawerWidth = 240;
 
@@ -204,6 +206,14 @@ const HomePage = () => {
               <Route exact path={"/"}>
                 <Dashboard />
               </Route>
+              <Route exact path={"/pets"}>
+                <PetsPage />
+              </Route>
+              <Route
+                exact
+                path={"/pet/:pet_id"}
+                render={(props) => <SinglePetPage {...props} />}
+              />
             </Router>
           </Grid>
           <Box pt={4}>
