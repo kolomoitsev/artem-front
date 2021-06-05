@@ -53,6 +53,11 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
     width: "100%",
   },
+  formArea: {
+    margin: theme.spacing(1),
+    width: "100%",
+    minHeight: "150px",
+  },
   appBar: {
     borderBottom: `1px solid ${theme.palette.divider}`,
   },
@@ -64,6 +69,17 @@ const useStyles = makeStyles((theme) => ({
   },
   link: {
     margin: theme.spacing(1, 1.5),
+  },
+  root: {
+    display: "flex",
+    flexDirection: "column",
+  },
+  listItem: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "flex-start",
+    border: "1px solid #ccc",
+    margin: "5px 0",
   },
   heroContent: {
     padding: theme.spacing(8, 0, 6),
@@ -295,6 +311,9 @@ const SinglePetPage = (props) => {
 
   const [reports, setReports] = useState([]);
 
+  const [promptedSummary, setPromptedSummary] = useState("");
+  const [promptedComment, setPromptedComment] = useState("");
+
   useEffect(() => {
     (async () => {
       setLoading(true);
@@ -397,13 +416,40 @@ const SinglePetPage = (props) => {
           }
         );
 
-        data && console.log(data);
         data && setReports(data);
       } catch (e) {
         console.log(e);
       }
     })();
   }, []);
+
+  const addComment = async () => {
+    const postData = {
+      creator_id: parseInt(localStorage.getItem("currentUser")),
+      conclusion: promptedSummary,
+    };
+
+    if (promptedComment) {
+      postData.comment = promptedComment;
+    }
+
+    try {
+      const { data } = await axios.post(
+        `${endpoint}/api/pets/${petId}/reports`,
+        postData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access")}`,
+          },
+        }
+      );
+
+      data && console.log(data);
+      window.location.reload();
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   const sendFeedData = async () => {
     try {
@@ -419,7 +465,6 @@ const SinglePetPage = (props) => {
           },
         }
       );
-      data && console.log(data);
     } catch (e) {
       console.log(e);
     }
@@ -439,7 +484,6 @@ const SinglePetPage = (props) => {
           },
         }
       );
-      data && console.log(data);
     } catch (e) {
       console.log(e);
     }
@@ -490,14 +534,11 @@ const SinglePetPage = (props) => {
                     <CardContent>
                       <div className={classes.cardPricing}>
                         <Typography
-                          component="h4"
-                          variant="h4"
+                          component="p"
+                          variant="p"
                           color="textPrimary"
                         >
-                          Breed
-                        </Typography>
-                        <Typography variant="h6" color="textSecondary">
-                          -{petInfo.father.breed}
+                          Breed - {petInfo.father.breed}
                         </Typography>
 
                         <Typography
@@ -536,20 +577,13 @@ const SinglePetPage = (props) => {
                   />
                   <CardContent>
                     <div className={classes.cardPricing}>
-                      <Typography
-                        component="h6"
-                        variant="h6"
-                        color="textPrimary"
-                      >
-                        {petInfo.owner.backup_email}
+                      <Typography component="p" variant="p" color="textPrimary">
+                        {petInfo.owner.backup_email} - backup email
                       </Typography>
-                      <Typography variant="h6" color="textSecondary">
-                        - backup email
-                      </Typography>
-                      <Typography variant="h6" color="textSecondary">
+                      <Typography variant="p" color="textSecondary">
                         Location - {petInfo.owner.location}
                       </Typography>
-                      <Typography variant="h6" color="textSecondary">
+                      <Typography variant="p" color="textSecondary">
                         Registration -{" "}
                         {new Date(
                           petInfo.owner.registration_date
@@ -573,16 +607,12 @@ const SinglePetPage = (props) => {
                     <CardContent>
                       <div className={classes.cardPricing}>
                         <Typography
-                          component="h4"
-                          variant="h4"
+                          component="p"
+                          variant="p"
                           color="textPrimary"
                         >
-                          Breed
+                          Breed - {petInfo.mother.breed}
                         </Typography>
-                        <Typography variant="h6" color="textSecondary">
-                          -{petInfo.mother.breed}
-                        </Typography>
-
                         <Typography
                           component="h3"
                           variant="h6"
@@ -769,6 +799,78 @@ const SinglePetPage = (props) => {
             <Paper className={fixedHeightPaper}>
               {antrop && <Chart2 anthropometry={antrop} />}
             </Paper>
+          </Grid>
+        </Grid>
+      </Container>
+
+      <Container maxWidth={"lg"} className={classes.container}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={8} lg={8}>
+            <List className={classes.root} subheader={<li />}>
+              <ListSubheader>{`Reports history`}</ListSubheader>
+              {reports &&
+                reports.map((item, index) => (
+                  <React.Fragment>
+                    {item && console.log(item)}
+                    <ListItem
+                      className={classes.listItem}
+                      key={`item-${index}-${item.creator.registration_date}`}
+                    >
+                      <ListItemText
+                        primary={`
+                          Author: ${item.creator.full_name}
+                        `}
+                      />
+
+                      <ListItemText
+                        primary={`
+                          Summary: ${item.report.report_conclusion}
+                        `}
+                      />
+
+                      {item.report.report_comment && (
+                        <ListItemText
+                          primary={`
+                          Report: ${item.report.report_comment}
+                        `}
+                        />
+                      )}
+                    </ListItem>
+                  </React.Fragment>
+                ))}
+            </List>
+          </Grid>
+          <Grid item xs={12} md={4} lg={4}>
+            <TextField
+              className={classes.formControl}
+              id="outlined-basic"
+              label="Enter report summary"
+              variant="outlined"
+              defaultValue={""}
+              onChange={(event) => setPromptedSummary(event.target.value)}
+            />
+
+            <TextField
+              className={classes.formArea}
+              id="outlined-basic"
+              label="Enter report comment"
+              variant="outlined"
+              multiline
+              rows={4}
+              defaultValue={""}
+              onChange={(event) => setPromptedComment(event.target.value)}
+            />
+
+            <CardActions>
+              <Button
+                variant="contained"
+                color="primary"
+                disabled={!promptedSummary}
+                onClick={addComment}
+              >
+                <Trans i18nKey={"addBrigade"}>Add comment</Trans>
+              </Button>
+            </CardActions>
           </Grid>
         </Grid>
       </Container>
