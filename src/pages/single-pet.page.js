@@ -15,6 +15,8 @@ import {
   CardContent,
   CardHeader,
   InputLabel,
+  ListItem,
+  ListItemText,
   Paper,
   Select,
   TextField,
@@ -36,6 +38,8 @@ import clsx from "clsx";
 import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 import { Trans } from "react-i18next";
+import List from "@material-ui/core/List";
+import ListSubheader from "@material-ui/core/ListSubheader";
 
 const useStyles = makeStyles((theme) => ({
   "@global": {
@@ -70,6 +74,7 @@ const useStyles = makeStyles((theme) => ({
   },
   fixedHeight: {
     height: 240,
+    width: "100%",
   },
   container: {
     padding: theme.spacing(2),
@@ -85,6 +90,13 @@ const useStyles = makeStyles((theme) => ({
       theme.palette.type === "light"
         ? theme.palette.grey[200]
         : theme.palette.grey[700],
+  },
+  listSection: {
+    backgroundColor: "inherit",
+  },
+  ul: {
+    backgroundColor: "inherit",
+    padding: 0,
   },
   cardPricing: {
     display: "flex",
@@ -276,6 +288,10 @@ const SinglePetPage = (props) => {
   const [selectedFood, setSelectedFood] = useState(null);
   const [foodAmount, setFoodAmount] = useState("");
   const [statsData, setStatsData] = useState(null);
+  const [antropometricRecords, setAnthropometricRecords] = useState([]);
+
+  const [promptedWeight, setPromptedWeight] = useState("");
+  const [promptedHeight, setPromptedHeight] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -347,6 +363,26 @@ const SinglePetPage = (props) => {
     })();
   }, []);
 
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await axios.get(
+          `${endpoint}/api/pets/${petId}/stats`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access")}`,
+            },
+          }
+        );
+
+        data && console.log(data);
+        setAnthropometricRecords(data);
+      } catch (e) {
+        console.log(e);
+      }
+    })();
+  }, []);
+
   const sendFeedData = async () => {
     try {
       const data = await axios.post(
@@ -354,6 +390,26 @@ const SinglePetPage = (props) => {
         {
           food_id: parseInt(selectedFood),
           portion_weight: parseInt(foodAmount),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access")}`,
+          },
+        }
+      );
+      data && console.log(data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const sendAntropometricData = async () => {
+    try {
+      const data = await axios.post(
+        `${endpoint}/api/pets/${petId}/stats`,
+        {
+          height: parseFloat(promptedHeight),
+          weight: parseFloat(promptedWeight),
         },
         {
           headers: {
@@ -529,6 +585,25 @@ const SinglePetPage = (props) => {
           </Container>
         </React.Fragment>
       )}
+      <Container maxWidth="lg" className={classes.container}>
+        <Grid item xs={12} md={12} lg={12}>
+          {statsData && (
+            <Paper className={fixedHeightPaper}>
+              <Deposits
+                food_total_calories={statsData.food_total_calories}
+                rer_total_calories={statsData.rer_total_calories}
+              />
+            </Paper>
+          )}
+          {!statsData && (
+            <Paper className={fixedHeightPaper}>
+              <Typography component="p" variant="h4">
+                No today's eatings
+              </Typography>
+            </Paper>
+          )}
+        </Grid>
+      </Container>
 
       <Container maxWidth="lg" className={classes.container}>
         <Grid container spacing={3}>
@@ -543,15 +618,122 @@ const SinglePetPage = (props) => {
       </Container>
 
       <Container maxWidth="lg" className={classes.container}>
-        <Grid item xs={12} md={12} lg={12}>
-          {statsData && (
-            <Paper className={fixedHeightPaper}>
-              <Deposits
-                food_total_calories={statsData.food_total_calories}
-                rer_total_calories={statsData.rer_total_calories}
+        <Grid container spacing={3}>
+          <Paper className={fixedHeightPaper}>
+            <Grid item xs={12} md={6}>
+              <InputLabel id="demo-controlled-open-select-label">
+                Select food
+              </InputLabel>
+
+              {foods && (
+                <Select
+                  labelId="demo-controlled-open-select-label"
+                  id="demo-controlled-open-select"
+                  open={open}
+                  onClose={handleClose}
+                  onOpen={handleOpen}
+                  defaultValue={foods[0] ? foods[0].food_id : ""}
+                  onChange={(event) => setSelectedFood(event.target.value)}
+                >
+                  {foods &&
+                    foods.map((food) => (
+                      <MenuItem value={food.food_id}>{food.food_name}</MenuItem>
+                    ))}
+                </Select>
+              )}
+            </Grid>
+
+            <Grid item xs={12} md={4} lg={6}>
+              <TextField
+                className={classes.formControl}
+                id="outlined-basic"
+                label="Enter amount"
+                variant="outlined"
+                defaultValue={""}
+                onChange={(event) => setFoodAmount(event.target.value)}
               />
-            </Paper>
-          )}
+            </Grid>
+
+            <Grid item xs={12} md={2} lg={2}>
+              <CardActions>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  disabled={!foodAmount}
+                  onClick={sendFeedData}
+                >
+                  <Trans i18nKey={"addBrigade"}>Feed pet</Trans>
+                </Button>
+              </CardActions>
+            </Grid>
+          </Paper>
+        </Grid>
+      </Container>
+
+      <Container maxWidth={"lg"} className={classes.container}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={8} lg={8}>
+            <List className={classes.root} subheader={<li />}>
+              <ListSubheader>{`Anthopometric record`}</ListSubheader>
+              {antropometricRecords &&
+                antropometricRecords.map((item, index) => (
+                  <React.Fragment>
+                    {index === 0 && (
+                      <ListItem key={`item-${index}-${item.record_id}`}>
+                        <ListItemText
+                          primary={`Current - Date:  ${new Date(
+                            item.record_time
+                          ).toLocaleDateString()} Height: ${
+                            item.height
+                          } Weight: ${item.weight}`}
+                        />
+                      </ListItem>
+                    )}
+                    {index !== 0 && (
+                      <ListItem key={`item-${index}-${item.record_id}`}>
+                        <ListItemText
+                          primary={`Date:  ${new Date(
+                            item.record_time
+                          ).toLocaleDateString()} Height: ${
+                            item.height
+                          } Weight: ${item.weight}`}
+                        />
+                      </ListItem>
+                    )}
+                  </React.Fragment>
+                ))}
+            </List>
+          </Grid>
+          <Grid item xs={12} md={4} lg={4}>
+            <TextField
+              className={classes.formControl}
+              id="outlined-basic"
+              label="Enter height"
+              variant="outlined"
+              defaultValue={""}
+              onChange={(event) => setPromptedHeight(event.target.value)}
+            />
+
+            <TextField
+              className={classes.formControl}
+              id="outlined-basic"
+              label="Enter weight"
+              variant="outlined"
+              defaultValue={""}
+              onChange={(event) => setPromptedWeight(event.target.value)}
+            />
+
+            <CardActions>
+              <Button
+                variant="contained"
+                color="primary"
+                disabled={!promptedHeight && !promptedWeight}
+                onClick={sendAntropometricData}
+              >
+                <Trans i18nKey={"addBrigade"}>Submit</Trans>
+              </Button>
+            </CardActions>
+          </Grid>
         </Grid>
       </Container>
 
@@ -561,56 +743,6 @@ const SinglePetPage = (props) => {
             <Paper className={fixedHeightPaper}>
               {antrop && <Chart2 anthropometry={antrop} />}
             </Paper>
-          </Grid>
-        </Grid>
-      </Container>
-
-      <Container maxWidth="lg" className={classes.container}>
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={6} lg={6}>
-            <InputLabel id="demo-controlled-open-select-label">
-              Select food
-            </InputLabel>
-
-            {foods && (
-              <Select
-                labelId="demo-controlled-open-select-label"
-                id="demo-controlled-open-select"
-                open={open}
-                onClose={handleClose}
-                onOpen={handleOpen}
-                defaultValue={foods[0] ? foods[0].food_id : ""}
-                onChange={(event) => setSelectedFood(event.target.value)}
-              >
-                {foods &&
-                  foods.map((food) => (
-                    <MenuItem value={food.food_id}>{food.food_name}</MenuItem>
-                  ))}
-              </Select>
-            )}
-          </Grid>
-          <Grid item xs={12} md={4} lg={4}>
-            <TextField
-              className={classes.formControl}
-              id="outlined-basic"
-              label="Enter amount"
-              variant="outlined"
-              defaultValue={""}
-              onChange={(event) => setFoodAmount(event.target.value)}
-            />
-          </Grid>
-
-          <Grid item xs={12} md={2} lg={2}>
-            <CardActions>
-              <Button
-                variant="contained"
-                color="primary"
-                disabled={!foodAmount}
-                onClick={sendFeedData}
-              >
-                <Trans i18nKey={"addBrigade"}>Feed pet</Trans>
-              </Button>
-            </CardActions>
           </Grid>
         </Grid>
       </Container>
