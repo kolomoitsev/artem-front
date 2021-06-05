@@ -70,11 +70,12 @@ const OutlinedCard = ({ pet, pets, setPets }) => {
   const [petType, setPetType] = useState(pet.pet_type.type_id || "");
   const [petBreed, setPetBreed] = useState(pet.breed || "");
   const [petFamily, setPetFamily] = useState(pet.family_name || "");
+
   const [petMother, setPetMother] = useState(
-    pet.father ? pet.father.pet_id : ""
+    pet.mother ? pet.mother.pet_id : ""
   );
   const [petFather, setPetFather] = useState(
-    pet.mother ? pet.mother.pet_id : ""
+    pet.father ? pet.father.pet_id : ""
   );
 
   const handleClose = () => {
@@ -94,11 +95,11 @@ const OutlinedCard = ({ pet, pets, setPets }) => {
   };
 
   const handleClose3 = () => {
-    setOpen2(false);
+    setOpen3(false);
   };
 
   const handleOpen3 = () => {
-    setOpen2(true);
+    setOpen3(true);
   };
 
   useEffect(() => {
@@ -126,6 +127,8 @@ const OutlinedCard = ({ pet, pets, setPets }) => {
         father_id: petFather,
         mother_id: petMother,
       };
+
+      console.log(postData);
 
       await axios.put(`${endpoint}/api/pets/${pet.pet_id}`, postData, {
         headers: {

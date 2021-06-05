@@ -293,6 +293,8 @@ const SinglePetPage = (props) => {
   const [promptedWeight, setPromptedWeight] = useState("");
   const [promptedHeight, setPromptedHeight] = useState("");
 
+  const [reports, setReports] = useState([]);
+
   useEffect(() => {
     (async () => {
       setLoading(true);
@@ -383,6 +385,26 @@ const SinglePetPage = (props) => {
     })();
   }, []);
 
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await axios.get(
+          `${endpoint}/api/pets/${petId}/reports`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access")}`,
+            },
+          }
+        );
+
+        data && console.log(data);
+        data && setReports(data);
+      } catch (e) {
+        console.log(e);
+      }
+    })();
+  }, []);
+
   const sendFeedData = async () => {
     try {
       const data = await axios.post(
@@ -455,50 +477,52 @@ const SinglePetPage = (props) => {
           <Container maxWidth="md" component="main">
             <Grid container spacing={5} alignItems="flex-end">
               <Grid item key={"Free1"} xs={12} sm={12 || 6} md={4}>
-                <Card>
-                  <CardHeader
-                    title={`Father - ${petInfo.father.name}`}
-                    subheader={`Family name - ${petInfo.father.family_name}`}
-                    titleTypographyProps={{ align: "center" }}
-                    subheaderTypographyProps={{ align: "center" }}
-                    action={"Pro" ? <StarIcon /> : null}
-                    className={classes.cardHeader}
-                  />
-                  <CardContent>
-                    <div className={classes.cardPricing}>
-                      <Typography
-                        component="h4"
-                        variant="h4"
-                        color="textPrimary"
-                      >
-                        Breed
-                      </Typography>
-                      <Typography variant="h6" color="textSecondary">
-                        -{petInfo.father.breed}
-                      </Typography>
+                {petInfo.father && (
+                  <Card>
+                    <CardHeader
+                      title={`Father - ${petInfo.father.name}`}
+                      subheader={`Family name - ${petInfo.father.family_name}`}
+                      titleTypographyProps={{ align: "center" }}
+                      subheaderTypographyProps={{ align: "center" }}
+                      action={"Pro" ? <StarIcon /> : null}
+                      className={classes.cardHeader}
+                    />
+                    <CardContent>
+                      <div className={classes.cardPricing}>
+                        <Typography
+                          component="h4"
+                          variant="h4"
+                          color="textPrimary"
+                        >
+                          Breed
+                        </Typography>
+                        <Typography variant="h6" color="textSecondary">
+                          -{petInfo.father.breed}
+                        </Typography>
 
-                      <Typography
-                        component="h3"
-                        variant="h6"
-                        color="textPrimary"
-                      >
-                        {petInfo.father_verified ? (
-                          <>
-                            <h5>
-                              <VerifiedUserIcon /> verified dog
-                            </h5>
-                          </>
-                        ) : (
-                          <>
-                            <h5>
-                              <NoEncryptionIcon /> Not verified dog
-                            </h5>
-                          </>
-                        )}
-                      </Typography>
-                    </div>
-                  </CardContent>
-                </Card>
+                        <Typography
+                          component="h3"
+                          variant="h6"
+                          color="textPrimary"
+                        >
+                          {petInfo.father_verified ? (
+                            <>
+                              <h5>
+                                <VerifiedUserIcon /> verified dog
+                              </h5>
+                            </>
+                          ) : (
+                            <>
+                              <h5>
+                                <NoEncryptionIcon /> Not verified dog
+                              </h5>
+                            </>
+                          )}
+                        </Typography>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
               </Grid>
               <Grid item key={"Free2"} xs={12} sm={12 || 6} md={4}>
                 <Card>
@@ -536,50 +560,52 @@ const SinglePetPage = (props) => {
                 </Card>
               </Grid>
               <Grid item key={"Free3"} xs={12} sm={12 || 6} md={4}>
-                <Card>
-                  <CardHeader
-                    title={`Mother - ${petInfo.mother.name}`}
-                    subheader={`Family name - ${petInfo.mother.family_name}`}
-                    titleTypographyProps={{ align: "center" }}
-                    subheaderTypographyProps={{ align: "center" }}
-                    action={"Pro" ? <StarIcon /> : null}
-                    className={classes.cardHeader}
-                  />
-                  <CardContent>
-                    <div className={classes.cardPricing}>
-                      <Typography
-                        component="h4"
-                        variant="h4"
-                        color="textPrimary"
-                      >
-                        Breed
-                      </Typography>
-                      <Typography variant="h6" color="textSecondary">
-                        -{petInfo.mother.breed}
-                      </Typography>
+                {petInfo.mother && (
+                  <Card>
+                    <CardHeader
+                      title={`Mother - ${petInfo.mother.name}`}
+                      subheader={`Family name - ${petInfo.mother.family_name}`}
+                      titleTypographyProps={{ align: "center" }}
+                      subheaderTypographyProps={{ align: "center" }}
+                      action={"Pro" ? <StarIcon /> : null}
+                      className={classes.cardHeader}
+                    />
+                    <CardContent>
+                      <div className={classes.cardPricing}>
+                        <Typography
+                          component="h4"
+                          variant="h4"
+                          color="textPrimary"
+                        >
+                          Breed
+                        </Typography>
+                        <Typography variant="h6" color="textSecondary">
+                          -{petInfo.mother.breed}
+                        </Typography>
 
-                      <Typography
-                        component="h3"
-                        variant="h6"
-                        color="textPrimary"
-                      >
-                        {petInfo.mother_verified ? (
-                          <>
-                            <h5>
-                              <VerifiedUserIcon /> verified dog
-                            </h5>
-                          </>
-                        ) : (
-                          <>
-                            <h5>
-                              <NoEncryptionIcon /> Not verified dog
-                            </h5>
-                          </>
-                        )}
-                      </Typography>
-                    </div>
-                  </CardContent>
-                </Card>
+                        <Typography
+                          component="h3"
+                          variant="h6"
+                          color="textPrimary"
+                        >
+                          {petInfo.mother_verified ? (
+                            <>
+                              <h5>
+                                <VerifiedUserIcon /> verified dog
+                              </h5>
+                            </>
+                          ) : (
+                            <>
+                              <h5>
+                                <NoEncryptionIcon /> Not verified dog
+                              </h5>
+                            </>
+                          )}
+                        </Typography>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
               </Grid>
             </Grid>
           </Container>
