@@ -8,35 +8,36 @@ import SettingsIcon from "@material-ui/icons/Settings";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import PetsIcon from "@material-ui/icons/Pets";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 
 const MainListItems = () => {
+  const { t } = useTranslation();
   return (
     <div>
-      <ListSubheader inset>General</ListSubheader>
+      <ListSubheader inset>{t("menu")}</ListSubheader>
       <ListItem button onClick={() => (window.location.href = "/")}>
         <ListItemIcon>
           <DashboardIcon />
         </ListItemIcon>
-        <ListItemText primary={<Trans i18nKey="title">Dashboard</Trans>} />
+        <ListItemText primary={t("menu_dashboard")} />
       </ListItem>
       <ListItem button onClick={() => (window.location.href = "/pets")}>
         <ListItemIcon>
           <PetsIcon />
         </ListItemIcon>
-        <ListItemText primary={<Trans i18nKey="users">Pets</Trans>} />
+        <ListItemText primary={t("menu_pets")} />
       </ListItem>
       <ListItem button onClick={() => (window.location.href = "/users")}>
         <ListItemIcon>
           <AccountCircleIcon />
         </ListItemIcon>
-        <ListItemText primary={<Trans i18nKey="users">Users</Trans>} />
+        <ListItemText primary={t("menu_users")} />
       </ListItem>
       <ListItem button onClick={() => (window.location.href = "/settings")}>
         <ListItemIcon>
           <SettingsIcon />
         </ListItemIcon>
-        <ListItemText primary={<Trans i18nKey="settings">Settings</Trans>} />
+        <ListItemText primary={t("menu_database")} />
       </ListItem>
       <ListItem
         button
@@ -48,7 +49,7 @@ const MainListItems = () => {
         <ListItemIcon>
           <ExitToAppIcon />
         </ListItemIcon>
-        <ListItemText primary={<Trans i18nKey="logout">Log out</Trans>} />
+        <ListItemText primary={t("menu_logout")} />
       </ListItem>
     </div>
   );

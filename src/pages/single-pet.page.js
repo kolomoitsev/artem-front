@@ -37,7 +37,7 @@ import Title from "../components/Title.components";
 import clsx from "clsx";
 import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import List from "@material-ui/core/List";
 import ListSubheader from "@material-ui/core/ListSubheader";
 
@@ -134,13 +134,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Deposits = ({ food_total_calories, rer_total_calories }) => {
+  const { t } = useTranslation();
   return (
     <React.Fragment>
-      <Title>Total food calories</Title>
+      <Title>{t("pet_total_food_calories")}</Title>
       <Typography component="p" variant="h4">
         {food_total_calories.toFixed(2)}
       </Typography>
-      <Title>RER total calories</Title>
+      <Title>{t("pet_requires_calories")}</Title>
       <Typography component="p" variant="h4">
         {rer_total_calories.toFixed(2)}
       </Typography>
@@ -151,6 +152,7 @@ const Deposits = ({ food_total_calories, rer_total_calories }) => {
 const Chart = ({ calories, rerCalories }) => {
   const [data, setData] = useState([]);
   const [data2, setData2] = useState([]);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const data = [
@@ -195,7 +197,7 @@ const Chart = ({ calories, rerCalories }) => {
 
   return (
     <React.Fragment>
-      <Title>Stats on chart</Title>
+      <Title>{t("pet_calories_chart")}</Title>
       <ResponsiveContainer>
         <LineChart margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
           <XAxis dataKey="name" />
@@ -226,6 +228,7 @@ const Chart = ({ calories, rerCalories }) => {
 const Chart2 = ({ anthropometry }) => {
   const [data, setData] = useState([]);
   const [data2, setData2] = useState([]);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const data = [
@@ -253,7 +256,7 @@ const Chart2 = ({ anthropometry }) => {
 
   return (
     <React.Fragment>
-      <Title>Stats on chart</Title>
+      <Title>{t("pet_anthropometry_chart")}</Title>
       <ResponsiveContainer>
         <LineChart margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
           <XAxis dataKey="name" />
@@ -286,6 +289,8 @@ const SinglePetPage = (props) => {
   const petId = props.match.params.pet_id;
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
   const [open, setOpen] = useState(false);
+
+  const { t } = useTranslation();
 
   const handleClose = () => {
     setOpen(false);
@@ -524,8 +529,10 @@ const SinglePetPage = (props) => {
                 {petInfo.father && (
                   <Card>
                     <CardHeader
-                      title={`Father - ${petInfo.father.name}`}
-                      subheader={`Family name - ${petInfo.father.family_name}`}
+                      title={`${t("pet_father")} - ${petInfo.father.name}`}
+                      subheader={`${t("pet_family_name")} - ${
+                        petInfo.father.family_name
+                      }`}
                       titleTypographyProps={{ align: "center" }}
                       subheaderTypographyProps={{ align: "center" }}
                       action={"Pro" ? <StarIcon /> : null}
@@ -538,7 +545,7 @@ const SinglePetPage = (props) => {
                           variant="p"
                           color="textPrimary"
                         >
-                          Breed - {petInfo.father.breed}
+                          {t("pet_breed")} - {petInfo.father.breed}
                         </Typography>
 
                         <Typography
@@ -549,13 +556,14 @@ const SinglePetPage = (props) => {
                           {petInfo.father_verified ? (
                             <>
                               <h5>
-                                <VerifiedUserIcon /> verified dog
+                                <VerifiedUserIcon /> {t("pet_parent_verified")}
                               </h5>
                             </>
                           ) : (
                             <>
                               <h5>
-                                <NoEncryptionIcon /> Not verified dog
+                                <NoEncryptionIcon />{" "}
+                                {t("pet_parent_unverified")}
                               </h5>
                             </>
                           )}
@@ -568,7 +576,7 @@ const SinglePetPage = (props) => {
               <Grid item key={"Free2"} xs={12} sm={12 || 6} md={4}>
                 <Card>
                   <CardHeader
-                    title={`Owner - ${petInfo.owner.full_name}`}
+                    title={`${t("pet_owner")} - ${petInfo.owner.full_name}`}
                     subheader={`${petInfo.owner.account_email}`}
                     titleTypographyProps={{ align: "center" }}
                     subheaderTypographyProps={{ align: "center" }}
@@ -578,13 +586,13 @@ const SinglePetPage = (props) => {
                   <CardContent>
                     <div className={classes.cardPricing}>
                       <Typography component="p" variant="p" color="textPrimary">
-                        {petInfo.owner.backup_email} - backup email
+                        {petInfo.owner.backup_email} - {t("pet_backup_email")}
                       </Typography>
                       <Typography variant="p" color="textSecondary">
-                        Location - {petInfo.owner.location}
+                        {t("pet_location")} - {petInfo.owner.location}
                       </Typography>
                       <Typography variant="p" color="textSecondary">
-                        Registration -{" "}
+                        {t("pet_registration_date")} -{" "}
                         {new Date(
                           petInfo.owner.registration_date
                         ).toLocaleDateString()}
@@ -597,8 +605,10 @@ const SinglePetPage = (props) => {
                 {petInfo.mother && (
                   <Card>
                     <CardHeader
-                      title={`Mother - ${petInfo.mother.name}`}
-                      subheader={`Family name - ${petInfo.mother.family_name}`}
+                      title={`${t("pet_mother")} - ${petInfo.mother.name}`}
+                      subheader={`${t("pet_family_name")} - ${
+                        petInfo.mother.family_name
+                      }`}
                       titleTypographyProps={{ align: "center" }}
                       subheaderTypographyProps={{ align: "center" }}
                       action={"Pro" ? <StarIcon /> : null}
@@ -611,7 +621,7 @@ const SinglePetPage = (props) => {
                           variant="p"
                           color="textPrimary"
                         >
-                          Breed - {petInfo.mother.breed}
+                          {t("pet_breed")} - {petInfo.mother.breed}
                         </Typography>
                         <Typography
                           component="h3"
@@ -621,13 +631,14 @@ const SinglePetPage = (props) => {
                           {petInfo.mother_verified ? (
                             <>
                               <h5>
-                                <VerifiedUserIcon /> verified dog
+                                <VerifiedUserIcon /> {t("pet_parent_verified")}
                               </h5>
                             </>
                           ) : (
                             <>
                               <h5>
-                                <NoEncryptionIcon /> Not verified dog
+                                <NoEncryptionIcon />{" "}
+                                {t("pet_parent_unverified")}
                               </h5>
                             </>
                           )}
@@ -654,7 +665,7 @@ const SinglePetPage = (props) => {
           {!statsData && (
             <Paper className={fixedHeightPaper}>
               <Typography component="p" variant="h4">
-                No today's eatings
+                {t("pet_no_eatings")}
               </Typography>
             </Paper>
           )}
@@ -678,7 +689,7 @@ const SinglePetPage = (props) => {
           <Paper className={fixedHeightPaper}>
             <Grid item xs={12} md={6}>
               <InputLabel id="demo-controlled-open-select-label">
-                Select food
+                {t("pet_select_food")}
               </InputLabel>
 
               {foods && (
@@ -703,7 +714,7 @@ const SinglePetPage = (props) => {
               <TextField
                 className={classes.formControl}
                 id="outlined-basic"
-                label="Enter amount"
+                label={t("pet_enter_eating_amount")}
                 variant="outlined"
                 defaultValue={""}
                 onChange={(event) => setFoodAmount(event.target.value)}
@@ -718,7 +729,7 @@ const SinglePetPage = (props) => {
                   disabled={!foodAmount}
                   onClick={sendFeedData}
                 >
-                  <Trans i18nKey={"addBrigade"}>Feed pet</Trans>
+                  {t("pet_feed_pet_button")}
                 </Button>
               </CardActions>
             </Grid>
@@ -730,29 +741,31 @@ const SinglePetPage = (props) => {
         <Grid container spacing={3}>
           <Grid item xs={12} md={8} lg={8}>
             <List className={classes.root} subheader={<li />}>
-              <ListSubheader>{`Anthopometric record`}</ListSubheader>
+              <ListSubheader>{t("pet_anthropometric_records")}</ListSubheader>
               {antropometricRecords &&
                 antropometricRecords.map((item, index) => (
                   <React.Fragment>
                     {index === 0 && (
                       <ListItem key={`item-${index}-${item.record_id}`}>
                         <ListItemText
-                          primary={`Current - Date:  ${new Date(
+                          primary={`${t("pet_current")} - ${t(
+                            "pet_date"
+                          )}:  ${new Date(
                             item.record_time
-                          ).toLocaleDateString()} Height: ${
+                          ).toLocaleDateString()} ${t("pet_height")}: ${
                             item.height
-                          } Weight: ${item.weight}`}
+                          } ${t("pet_weight")}: ${item.weight}`}
                         />
                       </ListItem>
                     )}
                     {index !== 0 && (
                       <ListItem key={`item-${index}-${item.record_id}`}>
                         <ListItemText
-                          primary={`Date:  ${new Date(
+                          primary={`${t("pet_date")}:  ${new Date(
                             item.record_time
-                          ).toLocaleDateString()} Height: ${
+                          ).toLocaleDateString()} ${t("pet_height")}: ${
                             item.height
-                          } Weight: ${item.weight}`}
+                          } ${t("pet_weight")}: ${item.weight}`}
                         />
                       </ListItem>
                     )}
@@ -764,7 +777,7 @@ const SinglePetPage = (props) => {
             <TextField
               className={classes.formControl}
               id="outlined-basic"
-              label="Enter height"
+              label={t("pet_enter_height")}
               variant="outlined"
               defaultValue={""}
               onChange={(event) => setPromptedHeight(event.target.value)}
@@ -773,7 +786,7 @@ const SinglePetPage = (props) => {
             <TextField
               className={classes.formControl}
               id="outlined-basic"
-              label="Enter weight"
+              label={t("pet_enter_weight")}
               variant="outlined"
               defaultValue={""}
               onChange={(event) => setPromptedWeight(event.target.value)}
@@ -786,7 +799,7 @@ const SinglePetPage = (props) => {
                 disabled={!promptedHeight && !promptedWeight}
                 onClick={sendAntropometricData}
               >
-                <Trans i18nKey={"addBrigade"}>Submit</Trans>
+                {t("pet_save_anthropometry_data")}
               </Button>
             </CardActions>
           </Grid>
@@ -807,7 +820,7 @@ const SinglePetPage = (props) => {
         <Grid container spacing={3}>
           <Grid item xs={12} md={8} lg={8}>
             <List className={classes.root} subheader={<li />}>
-              <ListSubheader>{`Reports history`}</ListSubheader>
+              <ListSubheader>{t("pet_reports_history")}</ListSubheader>
               {reports &&
                 reports.map((item, index) => (
                   <React.Fragment>
@@ -818,20 +831,24 @@ const SinglePetPage = (props) => {
                     >
                       <ListItemText
                         primary={`
-                          Author: ${item.creator.full_name}
+                          ${t("pet_reports_author")}: ${item.creator.full_name}
                         `}
                       />
 
                       <ListItemText
                         primary={`
-                          Summary: ${item.report.report_conclusion}
+                          ${t("pet_reports_summary")}: ${
+                          item.report.report_conclusion
+                        }
                         `}
                       />
 
                       {item.report.report_comment && (
                         <ListItemText
                           primary={`
-                          Report: ${item.report.report_comment}
+                          ${t("pet_reports_comment")}: ${
+                            item.report.report_comment
+                          }
                         `}
                         />
                       )}
@@ -844,7 +861,7 @@ const SinglePetPage = (props) => {
             <TextField
               className={classes.formControl}
               id="outlined-basic"
-              label="Enter report summary"
+              label={t("pet_reports_enter_summary")}
               variant="outlined"
               defaultValue={""}
               onChange={(event) => setPromptedSummary(event.target.value)}
@@ -853,7 +870,7 @@ const SinglePetPage = (props) => {
             <TextField
               className={classes.formArea}
               id="outlined-basic"
-              label="Enter report comment"
+              label={t("pet_reports_enter_comment")}
               variant="outlined"
               multiline
               rows={4}
@@ -868,7 +885,7 @@ const SinglePetPage = (props) => {
                 disabled={!promptedSummary}
                 onClick={addComment}
               >
-                <Trans i18nKey={"addBrigade"}>Add comment</Trans>
+                {t("pet_reports_add_button")}
               </Button>
             </CardActions>
           </Grid>

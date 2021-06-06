@@ -115,6 +115,7 @@ const HomePage = () => {
 
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
+  const { t } = useTranslation();
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -150,7 +151,7 @@ const HomePage = () => {
             noWrap
             className={classes.title}
           >
-            <Trans i18nKey="title">Dashboard</Trans>
+            {t("Dashboard")}
           </Typography>
 
           <IconButton color="inherit">
@@ -159,7 +160,7 @@ const HomePage = () => {
               color="primary"
               onClick={() => changeLanguage("en")}
             >
-              Eng
+              EN
             </Button>
           </IconButton>
 
@@ -169,7 +170,7 @@ const HomePage = () => {
               color="secondary"
               onClick={() => changeLanguage("ukr")}
             >
-              UKR
+              UA
             </Button>
           </IconButton>
         </Toolbar>

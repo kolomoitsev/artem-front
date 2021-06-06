@@ -8,6 +8,7 @@ import { endpoint } from "../config";
 import Alert from "@material-ui/lab/Alert";
 import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
+import { Trans, useTranslation } from "react-i18next";
 
 const saveAs = require("file-saver");
 
@@ -46,6 +47,8 @@ const SettingsPage = () => {
   const [createdBackup, setCreatedBackup] = useState(false);
 
   const [file, setFile] = useState(null);
+
+  const { t } = useTranslation();
 
   const showLabel = () => {
     setTimeout(() => {
@@ -168,11 +171,13 @@ const SettingsPage = () => {
       alignItems="flex-start"
     >
       <Grid item xs={12}>
-        <h1>Settings page</h1>
-        {appliedBackup && <Alert severity="success">Applied!</Alert>}
+        <h1>{t("dumps_page_name")}</h1>
+        {appliedBackup && (
+          <Alert severity="success">{t("dumps_applied_msg")}</Alert>
+        )}
         <List component="nav" aria-label="main mailbox folders">
           <ListItem>
-            <ListItemText primary="Available backups" />
+            <ListItemText primary={t("dumps_available_backups")} />
           </ListItem>
           {backups &&
             backups.map((backup) => (
@@ -190,7 +195,7 @@ const SettingsPage = () => {
                   color="primary"
                   className={classes.submit}
                 >
-                  Apply backup
+                  {t("dumps_execute_button")}
                 </Button>
 
                 <Button
@@ -201,7 +206,7 @@ const SettingsPage = () => {
                   color="secondary"
                   className={classes.submit}
                 >
-                  Delete backup
+                  {t("dumps_delete_button")}
                 </Button>
               </ListItem>
             ))}
@@ -210,10 +215,12 @@ const SettingsPage = () => {
         <Divider />
         <List component="nav" aria-label="secondary mailbox folders">
           <ListItem button onClick={() => makeBackup()}>
-            <ListItemText primary="Make backup now" />
+            <ListItemText primary={t("dumps_create_button")} />
           </ListItem>
         </List>
-        {createdBackup && <Alert severity="success">Backup created!</Alert>}
+        {createdBackup && (
+          <Alert severity="success">{t("dumps_create_success_msg")}</Alert>
+        )}
 
         <Divider />
 
@@ -232,7 +239,7 @@ const SettingsPage = () => {
             component="span"
             className={classes.upload}
           >
-            Upload backup
+            {t("dumps_upload_button")}
           </Button>
         </label>
 

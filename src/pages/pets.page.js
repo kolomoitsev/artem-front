@@ -5,7 +5,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import Backdrop from "@material-ui/core/Backdrop";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import {
   Card,
   CardActions,
@@ -77,6 +77,8 @@ const OutlinedCard = ({ pet, pets, setPets }) => {
   const [petFather, setPetFather] = useState(
     pet.father ? pet.father.pet_id : ""
   );
+
+  const { t } = useTranslation();
 
   const handleClose = () => {
     setOpen(false);
@@ -150,19 +152,13 @@ const OutlinedCard = ({ pet, pets, setPets }) => {
           onClose={() => setShowModal(false)}
           aria-labelledby="form-dialog-title"
         >
-          <DialogTitle id="form-dialog-title">
-            <Trans i18nKey={"changeEmail"}>Updating pets's info</Trans>
-          </DialogTitle>
+          <DialogTitle id="form-dialog-title">{t("pets_update")}</DialogTitle>
           <DialogContent>
-            <DialogContentText>
-              <Trans i18nKey={"updateHint"}>
-                For updating pets's info prompt all required data
-              </Trans>
-            </DialogContentText>
+            <DialogContentText>{t("pets_update_hint")}</DialogContentText>
             <TextField
               className={classes.formControl}
               id="outlined-basic"
-              label="Update pet's name"
+              label={t("pets_update_name")}
               variant="outlined"
               defaultValue={pet.name}
               onChange={(event) => setPetName(event.target.value)}
@@ -171,7 +167,7 @@ const OutlinedCard = ({ pet, pets, setPets }) => {
             {petTypes.length && (
               <>
                 <InputLabel id="demo-controlled-open-select-label">
-                  Update pet's type
+                  {t("pets_update_type")}
                 </InputLabel>
                 <Select
                   labelId="demo-controlled-open-select-label"
@@ -193,7 +189,7 @@ const OutlinedCard = ({ pet, pets, setPets }) => {
             <TextField
               className={classes.formControl}
               id="outlined-basic"
-              label="Update pet's breed"
+              label={t("pets_update_breed")}
               variant="outlined"
               defaultValue={pet.breed}
               onChange={(event) => setPetBreed(event.target.value)}
@@ -202,7 +198,7 @@ const OutlinedCard = ({ pet, pets, setPets }) => {
             <TextField
               className={classes.formControl}
               id="outlined-basic"
-              label="Update pet's family name"
+              label={t("pets_update_family_name")}
               variant="outlined"
               defaultValue={pet.family_name}
               onChange={(event) => setPetFamily(event.target.value)}
@@ -211,7 +207,7 @@ const OutlinedCard = ({ pet, pets, setPets }) => {
             {pets.length && (
               <>
                 <InputLabel id="demo-controlled-open-select-label-2">
-                  Update pet's father
+                  {t("pets_update_father")}
                 </InputLabel>
                 <Select
                   labelId="demo-controlled-open-select-label-2"
@@ -233,7 +229,7 @@ const OutlinedCard = ({ pet, pets, setPets }) => {
             {pets.length && (
               <>
                 <InputLabel id="demo-controlled-open-select-label-3">
-                  Update pet's mother
+                  {t("pets_update_mother")}
                 </InputLabel>
                 <Select
                   labelId="demo-controlled-open-select-label-3"
@@ -254,35 +250,42 @@ const OutlinedCard = ({ pet, pets, setPets }) => {
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setShowModal(false)} color="primary">
-              <Trans i18nKey={"cancel"}>Cancel</Trans>
+              {t("pets_update_cancel")}
             </Button>
             <Button onClick={handleUpdatingInfo} color="primary">
-              <Trans i18nKey={"save"}>Save</Trans>
+              {t("pets_update_save")}
             </Button>
           </DialogActions>
         </Dialog>
       )}
 
       <CardContent>
-        <Typography
-          className={classes.title}
-          color="textSecondary"
-          gutterBottom
-        >
-          <Trans i18nKey={"type"}>Breed: </Trans> {pet.breed}
-        </Typography>
+        {pet.breed && (
+          <Typography
+            className={classes.title}
+            color="textSecondary"
+            gutterBottom
+          >
+            {t("pets_breed") + " "}
+            {pet.breed}
+          </Typography>
+        )}
         <Typography variant="h5" component="h6">
-          <Trans i18nKey={"name"}>Pet's name: </Trans> {pet.name}
+          {t("pets_name") + " "}
+          {pet.name}
         </Typography>
-        <Typography
-          gutterBottom
-          variant="h5"
-          component="h6"
-          className={classes.pos}
-          color="textSecondary"
-        >
-          <Trans i18nKey={"diagnostics"}>Family name: </Trans> {pet.family_name}
-        </Typography>
+        {pet.family_name && (
+          <Typography
+            gutterBottom
+            variant="h5"
+            component="h6"
+            className={classes.pos}
+            color="textSecondary"
+          >
+            {t("pets_family_name") + " "}
+            {pet.family_name}
+          </Typography>
+        )}
         <Typography
           gutterBottom
           variant="h6"
@@ -290,7 +293,7 @@ const OutlinedCard = ({ pet, pets, setPets }) => {
           className={classes.pos}
           color="textSecondary"
         >
-          <Trans i18nKey={"diagnostics"}>Owner details: </Trans>{" "}
+          {t("pets_owner") + " "}
           {pet.owner.full_name}
         </Typography>
 
@@ -301,7 +304,7 @@ const OutlinedCard = ({ pet, pets, setPets }) => {
           className={classes.pos}
           color="textSecondary"
         >
-          <Trans i18nKey={"diagnostics"}>Pet type: </Trans>{" "}
+          {t("pets_pet_type") + " "}
           {pet.pet_type.type_name}
         </Typography>
       </CardContent>
@@ -311,7 +314,7 @@ const OutlinedCard = ({ pet, pets, setPets }) => {
           color="primary"
           onClick={() => history.push(`/pet/${pet.pet_id}`)}
         >
-          <Trans i18nKey={"addBrigade"}>More details </Trans>
+          {t("pets_more_details_button")}
         </Button>
 
         <Button
@@ -319,7 +322,7 @@ const OutlinedCard = ({ pet, pets, setPets }) => {
           color="secondary"
           onClick={() => setShowModal(true)}
         >
-          <Trans i18nKey={"addBrigade"}>Edit</Trans>
+          {t("pets_edit_button")}
         </Button>
       </CardActions>
     </Card>
@@ -330,6 +333,7 @@ const PetsPage = () => {
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
   const [pets, setPets] = useState([]);
+  const { t } = useTranslation();
 
   useEffect(() => {
     (async () => {
@@ -358,9 +362,7 @@ const PetsPage = () => {
       alignItems="flex-start"
     >
       <Grid item xs={12}>
-        <h1>
-          <Trans i18nKey={"hTitle"}>Pets page</Trans>
-        </h1>
+        <h1>{t("pets_page_name")}</h1>
       </Grid>
       <Grid
         container
@@ -380,9 +382,7 @@ const PetsPage = () => {
           })}
         {(!pets || !pets.length) && (
           <Grid item xs={12} md={12} lg={12}>
-            <h2>
-              <Trans i18nKey={"noEmergencies"}>No pets</Trans>
-            </h2>
+            <h2>{t("pets_no_pets_msg")}</h2>
           </Grid>
         )}
       </Grid>

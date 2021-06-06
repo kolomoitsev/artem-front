@@ -7,6 +7,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Title from "./Title.components";
+import { useTranslation } from "react-i18next";
 
 // Generate Order Data
 function createData(id, date, name, shipTo, paymentMethod, amount) {
@@ -68,18 +69,19 @@ const useStyles = makeStyles((theme) => ({
 
 const Orders = ({ lastsubs }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
 
   return (
     <React.Fragment>
-      <Title>Recent Orders</Title>
+      <Title>{t("index_table_header")}</Title>
       <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell>Date</TableCell>
-            <TableCell>Full name</TableCell>
-            <TableCell>Location</TableCell>
-            <TableCell>Account email</TableCell>
-            <TableCell align="right">User nickname</TableCell>
+            <TableCell>{t("index_table_date")}</TableCell>
+            <TableCell>{t("index_table_full_name")}</TableCell>
+            <TableCell>{t("index_table_location")}</TableCell>
+            <TableCell>{t("index_table_email")}</TableCell>
+            <TableCell align="right">{t("index_table_username")}</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -98,7 +100,7 @@ const Orders = ({ lastsubs }) => {
       </Table>
       <div className={classes.seeMore}>
         <Link color="primary" href="#" onClick={preventDefault}>
-          See more orders
+          {t("index_more_subscriptions")}
         </Link>
       </div>
     </React.Fragment>

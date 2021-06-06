@@ -9,6 +9,7 @@ import Deposits from "../components/Deposits.component";
 import Orders from "../components/Orders.component";
 import axios from "axios";
 import { endpoint } from "../config";
+import { useTranslation } from "react-i18next";
 
 const drawerWidth = 240;
 
@@ -100,6 +101,8 @@ const Dashboard = () => {
   const [total, setTotal] = useState(0);
   const [lastsubs, setLastsubs] = useState([]);
 
+  const { t } = useTranslation();
+
   const sum = useRef(0);
 
   useEffect(() => {
@@ -131,13 +134,13 @@ const Dashboard = () => {
             <Paper className={fixedHeightPaper}>
               {registrations.length && subscriptions.length && (
                 <Chart
+                  title={t("index_chart_name")}
                   registrations={registrations}
                   subscriptions={subscriptions}
                 />
               )}
             </Paper>
           </Grid>
-          {/* Recent Deposits */}
           <Grid item xs={12} md={4} lg={3}>
             {subscriptions.length && registrations.length && (
               <Paper className={fixedHeightPaper}>
@@ -148,7 +151,6 @@ const Dashboard = () => {
               </Paper>
             )}
           </Grid>
-          {/* Recent Orders */}
           <Grid item xs={12}>
             {lastsubs && (
               <Paper className={classes.paper}>

@@ -12,7 +12,7 @@ import {
 
 import Title from "./Title.components";
 
-const Chart = ({ registrations, subscriptions }) => {
+const Chart = ({ title, registrations, subscriptions }) => {
   const data = [
     ...registrations.map((register) => {
       return {
@@ -33,7 +33,7 @@ const Chart = ({ registrations, subscriptions }) => {
 
   return (
     <React.Fragment>
-      <Title>Stats on chart</Title>
+      <Title>{title}</Title>
       <ResponsiveContainer>
         <LineChart margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
           <XAxis dataKey="name" />
