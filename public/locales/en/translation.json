@@ -59,6 +59,10 @@
   "pet_requires_calories": "Today Required Calories",
   "pet_calories_chart": "Calories Chart",
   "pet_anthropometry_chart": "Anthropometry Chart",
+  "pet_total_distance": "Today Total Distance (m)",
+  "pet_mean_speed": "Mean Speed (km/h)",
+  "pet_mean_speed_chart": "Mean Speed Chart",
+  "pet_total_distance_chart": "Distance Chart",
 
   "dumps_page_name": "Database Dumps",
   "dumps_available_backups": "Available Dumps",

@@ -59,6 +59,10 @@
   "pet_requires_calories": "Сьогодні необхідно калорій",
   "pet_calories_chart": "Графік кількості рекомендованих та отриманих калорій",
   "pet_anthropometry_chart": "Графік антропометричних даних",
+  "pet_total_distance": "Сьогодні пройдено метрів",
+  "pet_mean_speed": "Середня швидкість (км/год)",
+  "pet_mean_speed_chart": "Графік середньої швидкості",
+  "pet_total_distance_chart": "Графік пройденого шляху",
 
   "dumps_page_name": "Сторінка дампів бази даних",
   "dumps_available_backups": "Доступні дампи",

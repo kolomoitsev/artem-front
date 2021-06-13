@@ -89,6 +89,10 @@ const useStyles = makeStyles((theme) => ({
     color: "#fff",
   },
   fixedHeight: {
+    height: 350,
+    width: "100%",
+  },
+  fixedHeight2: {
     height: 240,
     width: "100%",
   },
@@ -133,7 +137,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Deposits = ({ food_total_calories, rer_total_calories }) => {
+const Deposits = ({
+  food_total_calories,
+  rer_total_calories,
+  total_distance,
+  mean_speed,
+}) => {
   const { t } = useTranslation();
   return (
     <React.Fragment>
@@ -144,6 +153,14 @@ const Deposits = ({ food_total_calories, rer_total_calories }) => {
       <Title>{t("pet_requires_calories")}</Title>
       <Typography component="p" variant="h4">
         {rer_total_calories.toFixed(2)}
+      </Typography>
+      <Title>{t("pet_total_distance")}</Title>
+      <Typography component="p" variant="h4">
+        {total_distance.toFixed(2)}
+      </Typography>
+      <Title>{t("pet_mean_speed")}</Title>
+      <Typography component="p" variant="h4">
+        {mean_speed.toFixed(2)}
       </Typography>
     </React.Fragment>
   );
@@ -284,10 +301,92 @@ const Chart2 = ({ anthropometry }) => {
   );
 };
 
+const Chart3 = ({ activity }) => {
+  const [data, setData] = useState([]);
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    const data = [
+      ...activity.map((meanSpeed) => {
+        return {
+          name: new Date(meanSpeed.date).toDateString(),
+          mean_speed: (meanSpeed.mean_speed * 60) / 1000,
+        };
+      }),
+    ];
+
+    setData(data);
+  }, [activity]);
+
+  return (
+    <React.Fragment>
+      <Title>{t("pet_mean_speed_chart")}</Title>
+      <ResponsiveContainer>
+        <LineChart margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <CartesianGrid strokeDasharray="3 3" />
+          <Tooltip />
+          <Legend />
+          <Line
+            data={data}
+            type="monotone"
+            dataKey="mean_speed"
+            stroke="#8884d8"
+            activeDot={{ r: 8 }}
+          />
+        </LineChart>
+      </ResponsiveContainer>
+    </React.Fragment>
+  );
+};
+
+const Chart4 = ({ activity }) => {
+  const [data, setData] = useState([]);
+  const [data2, setData2] = useState([]);
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    const data = [
+      ...activity.map((distance) => {
+        return {
+          name: new Date(distance.date).toDateString(),
+          total_distance: distance.total_distance,
+        };
+      }),
+    ];
+
+    setData(data);
+  }, [activity]);
+
+  return (
+    <React.Fragment>
+      <Title>{t("pet_total_distance_chart")}</Title>
+      <ResponsiveContainer>
+        <LineChart margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <CartesianGrid strokeDasharray="3 3" />
+          <Tooltip />
+          <Legend />
+          <Line
+            data={data}
+            type="monotone"
+            dataKey="total_distance"
+            stroke="#8884d8"
+            activeDot={{ r: 8 }}
+          />
+        </LineChart>
+      </ResponsiveContainer>
+    </React.Fragment>
+  );
+};
+
 const SinglePetPage = (props) => {
   const classes = useStyles();
   const petId = props.match.params.pet_id;
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+  const fixedHeightPaper2 = clsx(classes.paper, classes.fixedHeight2);
   const [open, setOpen] = useState(false);
 
   const { t } = useTranslation();
@@ -310,6 +409,7 @@ const SinglePetPage = (props) => {
   const [foodAmount, setFoodAmount] = useState("");
   const [statsData, setStatsData] = useState(null);
   const [antropometricRecords, setAnthropometricRecords] = useState([]);
+  const [activityRecords, setActivityRecords] = useState([]);
 
   const [promptedWeight, setPromptedWeight] = useState("");
   const [promptedHeight, setPromptedHeight] = useState("");
@@ -341,7 +441,7 @@ const SinglePetPage = (props) => {
     (async () => {
       try {
         const {
-          data: { food_calories, rer_calories, anthropometry },
+          data: { food_calories, rer_calories, anthropometry, activity },
         } = await axios.get(`${endpoint}/api/pets/${petId}/statistic`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access")}`,
@@ -350,6 +450,7 @@ const SinglePetPage = (props) => {
         anthropometry && setAntrop(anthropometry);
         food_calories && setCalories(food_calories);
         rer_calories && setRerCalories(rer_calories);
+        activity && setActivityRecords(activity);
       } catch (e) {
         console.log(e);
       }
@@ -382,6 +483,7 @@ const SinglePetPage = (props) => {
             },
           }
         );
+        data && console.log(data);
         data && setStatsData(data);
       } catch (e) {
         console.log(e);
@@ -401,8 +503,7 @@ const SinglePetPage = (props) => {
           }
         );
 
-        data && console.log(data);
-        setAnthropometricRecords(data);
+        data && setAnthropometricRecords(data);
       } catch (e) {
         console.log(e);
       }
@@ -659,6 +760,8 @@ const SinglePetPage = (props) => {
               <Deposits
                 food_total_calories={statsData.food_total_calories}
                 rer_total_calories={statsData.rer_total_calories}
+                total_distance={statsData.total_distance}
+                mean_speed={statsData.mean_speed}
               />
             </Paper>
           )}
@@ -686,7 +789,7 @@ const SinglePetPage = (props) => {
 
       <Container maxWidth="lg" className={classes.container}>
         <Grid container spacing={3}>
-          <Paper className={fixedHeightPaper}>
+          <Paper className={fixedHeightPaper2}>
             <Grid item xs={12} md={6}>
               <InputLabel id="demo-controlled-open-select-label">
                 {t("pet_select_food")}
@@ -816,9 +919,28 @@ const SinglePetPage = (props) => {
         </Grid>
       </Container>
 
+      <Container maxWidth="lg" className={classes.container}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={12} lg={12}>
+            <Paper className={fixedHeightPaper}>
+              {activityRecords && <Chart3 activity={activityRecords} />}
+            </Paper>
+          </Grid>
+        </Grid>
+      </Container>
+      <Container maxWidth="lg" className={classes.container}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={12} lg={12}>
+            <Paper className={fixedHeightPaper}>
+              {activityRecords && <Chart4 activity={activityRecords} />}
+            </Paper>
+          </Grid>
+        </Grid>
+      </Container>
+
       <Container maxWidth={"lg"} className={classes.container}>
         <Grid container spacing={3}>
-          <Grid item xs={12} md={8} lg={8}>
+          <Grid item xs={12} md={12} lg={12}>
             <List className={classes.root} subheader={<li />}>
               <ListSubheader>{t("pet_reports_history")}</ListSubheader>
               {reports &&
@@ -857,38 +979,29 @@ const SinglePetPage = (props) => {
                 ))}
             </List>
           </Grid>
-          <Grid item xs={12} md={4} lg={4}>
-            <TextField
-              className={classes.formControl}
-              id="outlined-basic"
-              label={t("pet_reports_enter_summary")}
-              variant="outlined"
-              defaultValue={""}
-              onChange={(event) => setPromptedSummary(event.target.value)}
-            />
 
-            <TextField
-              className={classes.formArea}
-              id="outlined-basic"
-              label={t("pet_reports_enter_comment")}
-              variant="outlined"
-              multiline
-              rows={4}
-              defaultValue={""}
-              onChange={(event) => setPromptedComment(event.target.value)}
-            />
+          {/*  <TextField*/}
+          {/*    className={classes.formArea}*/}
+          {/*    id="outlined-basic"*/}
+          {/*    label={t("pet_reports_enter_comment")}*/}
+          {/*    variant="outlined"*/}
+          {/*    multiline*/}
+          {/*    rows={4}*/}
+          {/*    defaultValue={""}*/}
+          {/*    onChange={(event) => setPromptedComment(event.target.value)}*/}
+          {/*  />*/}
 
-            <CardActions>
-              <Button
-                variant="contained"
-                color="primary"
-                disabled={!promptedSummary}
-                onClick={addComment}
-              >
-                {t("pet_reports_add_button")}
-              </Button>
-            </CardActions>
-          </Grid>
+          {/*  <CardActions>*/}
+          {/*    <Button*/}
+          {/*      variant="contained"*/}
+          {/*      color="primary"*/}
+          {/*      disabled={!promptedSummary}*/}
+          {/*      onClick={addComment}*/}
+          {/*    >*/}
+          {/*      {t("pet_reports_add_button")}*/}
+          {/*    </Button>*/}
+          {/*  </CardActions>*/}
+          {/*</Grid>*/}
         </Grid>
       </Container>
 
